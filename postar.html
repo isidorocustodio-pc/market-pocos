@@ -20,7 +20,8 @@
         <input type="text" id="bairro" placeholder="Seu Bairro em Poços">
         <button type="submit">Publicar Agora</button>
     </form>
-        <input type="file" id="foto" accept="image/*" capture="environment">
+       <!-- Remova o capture="environment" para liberar a galeria -->
+        <input type="file" id="foto" accept="image/*">
     <script>
     // Use as mesmas chaves que você já tem no index.html
     const supabaseUrl = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
