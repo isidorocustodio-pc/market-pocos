@@ -22,6 +22,19 @@
     </form>
        <!-- Remova o capture="environment" para liberar a galeria -->
         <input type="file" id="foto" accept="image/*">
+        <div id="preview" style="margin-top: 10px;">
+    <img id="imagem-preview" src="" style="max-width: 100%; display: none; border-radius: 8px;">
+</div>
+
+<script>
+    // Mostrar a foto assim que for escolhida
+    document.getElementById('foto').onchange = evt => {
+        const [file] = document.getElementById('foto').files;
+        if (file) {
+            const preview = document.getElementById('imagem-preview');
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
     <script>
     // Use as mesmas chaves que você já tem no index.html
     const supabaseUrl = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
