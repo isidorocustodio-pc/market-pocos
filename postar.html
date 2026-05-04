@@ -22,27 +22,55 @@
     </form>
         <input type="file" id="foto" accept="image/*" capture="environment">
     <script>
-        // Use as mesmas chaves que você usou no index.html
-        const supabaseUrl = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
-        const supabaseKey = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    // Use as mesmas chaves que você já tem no index.html
+    const supabaseUrl = 'SUA_URL_DO_SUPABASE';
+    const supabaseKey = 'SUA_CHAVE_ANON_DO_SUPABASE';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        document.getElementById('form-anuncio').onsubmit = async (e) => {
-            e.preventDefault();
-            const { error } = await supabase.from('anuncios').insert([{
-                titulo: document.getElementById('titulo').value,
-                preco: document.getElementById('preco').value,
-                whatsapp: document.getElementById('whatsapp').value,
-                bairro: document.getElementById('bairro').value
-            }]);
+    document.getElementById('form-anuncio').onsubmit = async (e) => {
+        e.preventDefault();
+        
+        const fotoArquivo = document.getElementById('foto').files[0];
+        let urlPublica = '';
 
-            if (error) {
-                alert('Erro ao salvar: ' + error.message);
-            } else {
-                alert('Anúncio publicado! Aqui dá negócio.');
-                window.location.href = 'index.html';
+        // SE TIVER FOTO, FAZ O UPLOAD PRIMEIRO
+        if (fotoArquivo) {
+            // Gera um nome único para a imagem não ser substituída
+            const nomeArquivo = Date.now() + '-' + fotoArquivo.name;
+            
+            const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                .from('fotos-anuncios')
+                .upload(nomeArquivo, fotoArquivo);
+
+            if (uploadError) {
+                alert('Erro ao subir foto: ' + uploadError.message);
+                return;
             }
-        };
-    </script>
+            
+            // Pega o link da foto que acabou de subir
+            const { data: linkData } = supabaseClient.storage
+                .from('fotos-anuncios')
+                .getPublicUrl(nomeArquivo);
+            
+            urlPublica = linkData.publicUrl;
+        }
+
+        // AGORA SALVA O ANÚNCIO NO BANCO COM O LINK DA FOTO
+        const { error: dbError } = await supabaseClient.from('anuncios').insert([{
+            titulo: document.getElementById('titulo').value,
+            preco: document.getElementById('preco').value,
+            whatsapp: document.getElementById('whatsapp').value,
+            bairro: document.getElementById('bairro').value,
+            imagem_url: urlPublica // Aqui entra o link da foto que geramos acima!
+        }]);
+
+        if (dbError) {
+            alert('Erro ao salvar anúncio: ' + dbError.message);
+        } else {
+            alert('Anúncio publicado! Aqui dá negócio.');
+            window.location.href = 'index.html';
+        }
+    };
+</script>
 </body>
 </html>
