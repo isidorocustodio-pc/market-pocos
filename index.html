@@ -2,21 +2,74 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market Poços | Aqui dá negócio</title>
+    <!-- Script do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f0f2f5; margin: 0; padding: 20px; }
-        img { max-width: 300px; height: auto; margin-bottom: 20px; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: inline-block; }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 0; text-align: center; }
+        header { background: #fff; padding: 20px; border-bottom: 2px solid #007bff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        img.logo { max-width: 250px; height: auto; }
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        .anuncio-card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; align-items: center; text-align: left; }
+        .anuncio-card img { width: 100px; height: 100px; border-radius: 8px; object-fit: cover; margin-right: 15px; }
+        .btn-anunciar { background: #007bff; color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; text-decoration: none; display: inline-block; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <!-- Certifique-se que o nome da imagem no GitHub seja logo.png -->
-        <img src="logo.png" alt="Market Poços">
-        <h1>Aqui dá negócio!</h1>
-        <p>O portal de anúncios de Poços de Caldas está chegando.</p>
-        <button onclick="alert('Sistema de anúncios em manutenção')">Anunciar Produto</button>
+
+<header>
+    <!-- Sua logo oficial -->
+    <img src="logo.png" alt="Market Poços - Aqui dá negócio" class="logo">
+</header>
+
+<div class="container">
+    <a href="postar.html" class="btn-anunciar">🚀 Quero Anunciar Agora</a>
+    
+    <h2>Anúncios Recentes em Poços de Caldas</h2>
+    <div id="lista-anuncios">
+        <p>Carregando oportunidades...</p>
     </div>
+</div>
+
+<script>
+    // Conexão automática com as variáveis da Vercel
+    const supabaseUrl = 'SUA_URL_DO_SUPABASE'; // Substitua pelo link do painel do Supabase
+    const supabaseKey = 'SUA_CHAVE_ANON_DO_SUPABASE'; // Substitua pela chave anon do painel do Supabase
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function buscarAnuncios() {
+        const { data, error } = await supabaseClient
+            .from('anuncios') // Nome da tabela que criamos
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        const lista = document.getElementById('lista-anuncios');
+        
+        if (error) {
+            lista.innerHTML = "<p>Erro ao carregar anúncios. Verifique a conexão.</p>";
+            console.error(error);
+            return;
+        }
+
+        if (data.length === 0) {
+            lista.innerHTML = "<p>Nenhum anúncio encontrado. Seja o primeiro!</p>";
+        } else {
+            lista.innerHTML = data.map(item => `
+                <div class="anuncio-card">
+                    <img src="${item.imagem_url || 'https://via.placeholder.com/100'}" alt="Produto">
+                    <div>
+                        <h3 style="margin:0">${item.titulo}</h3>
+                        <p style="color:#28a745; font-weight:bold; margin:5px 0">R$ ${item.preco}</p>
+                        <small>Bairro: ${item.bairro || 'Poços de Caldas'}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    buscarAnuncios();
+</script>
+
 </body>
 </html>
