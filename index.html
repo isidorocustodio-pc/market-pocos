@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Poços | Aqui dá negócio</title>
+    <!-- Link para o CSS (estilo) -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Script do Supabase (para o banco de dados funcionar) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <header>
+        <!-- Sua Logo Oficial -->
+        <img src="logo.png" alt="Market Poços - Aqui dá negócio" id="main-logo">
+    </header>
+
+    <main id="app">
+        <h1>Bem-vindo ao Market Poços</h1>
+        <div id="lista-anuncios">
+            <!-- Os anúncios do Jardim dos Estados e outros bairros aparecerão aqui -->
+        </div>
+    </main>
+
+    <script>
+        // Configuração das chaves que você colocou na Vercel
+        const supabaseUrl = 'prj_D2kMfbLjpm40PCKpBhIZi7tlopvx';
+        const supabaseKey = 'prj_D2kMfbLjpm40PCKpBhIZi7tlopvx';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        console.log("Market Poços carregado com sucesso!");
+    </script>
+</body>
+</html>
