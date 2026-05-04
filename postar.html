@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Anunciar - Market Poços</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; background: #f0f2f5; }
+        form { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; }
+        button { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>Criar Novo Anúncio</h1>
+    <form id="form-anuncio">
+        <input type="text" id="titulo" placeholder="Título do Produto (ex: Bateria Corolla)" required>
+        <input type="text" id="preco" placeholder="Preço (ex: 350,00)" required>
+        <input type="text" id="whatsapp" placeholder="Seu WhatsApp">
+        <input type="text" id="bairro" placeholder="Seu Bairro em Poços">
+        <button type="submit">Publicar Agora</button>
+    </form>
+
+    <script>
+        // Use as mesmas chaves que você usou no index.html
+        const supabaseUrl = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
+        const supabaseKey = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        document.getElementById('form-anuncio').onsubmit = async (e) => {
+            e.preventDefault();
+            const { error } = await supabase.from('anuncios').insert([{
+                titulo: document.getElementById('titulo').value,
+                preco: document.getElementById('preco').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                bairro: document.getElementById('bairro').value
+            }]);
+
+            if (error) {
+                alert('Erro ao salvar: ' + error.message);
+            } else {
+                alert('Anúncio publicado! Aqui dá negócio.');
+                window.location.href = 'index.html';
+            }
+        };
+    </script>
+</body>
+</html>
