@@ -1,112 +1,117 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Poços - Postar</title>
+    <title>Market Poços</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; background: #eee; }
-        .box { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; }
-        /* Botão Grande de Foto */
-        .btn-foto { 
-            display: block; 
-            background: #eef6ff; 
-            border: 3px dashed #007bff; 
-            padding: 40px 10px; 
-            border-radius: 10px; 
-            cursor: pointer; 
+        /* CSS direto e simples para não desconfigurar */
+        body { font-family: sans-serif; background: #f0f0f0; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .cartao { background: white; width: 100%; max-width: 380px; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
+        .logo { color: #007bff; font-size: 24px; font-weight: bold; margin-bottom: 5px; display: block; }
+        .slogan { color: #666; font-size: 14px; margin-bottom: 20px; display: block; }
+        
+        /* O BOTÃO DE FOTO */
+        .botao-foto {
+            display: block;
+            background: #f8fbff;
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            padding: 40px 10px;
             margin-bottom: 20px;
+            cursor: pointer;
         }
-        .emoji-cam { font-size: 50px; display: block; }
-        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; }
-        #preview { width: 100%; display: none; margin-bottom: 20px; border-radius: 5px; }
+        .emoji { font-size: 50px; display: block; margin-bottom: 10px; }
+        .texto-azul { color: #007bff; font-weight: bold; font-size: 14px; }
+
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        #foto-preview { width: 100%; border-radius: 10px; display: none; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h2 style="color:#007bff; margin-bottom:5px;">Market Poços</h2>
-    <p style="margin-bottom:20px; color:#666;">Aqui dá negócio</p>
+<div class="cartao">
+    <span class="logo">Market Poços</span>
+    <span class="slogan">Aqui dá negócio</span> <!-- -->
 
-    <form id="meuForm">
-        <img id="preview">
+    <form id="formulario">
+        <img id="foto-preview">
         
-        <!-- Rótulo que serve como botão de clique -->
-        <label for="fotoInput" class="btn-foto">
-            <span class="emoji-cam">📸</span>
-            <b style="color:#007bff;">TOQUE PARA TIRAR FOTO OU ESCOLHER GALERIA</b>
+        <label for="campo-foto" class="botao-foto" id="label-foto">
+            <span class="emoji">📸</span>
+            <span class="texto-azul">CLIQUE PARA FOTO OU GALERIA</span>
         </label>
         
-        <!-- O INPUT SEM O COMANDO 'CAPTURE' -->
-        <input type="file" id="fotoInput" accept="image/*" style="display:none">
+        <!-- INPUT PURO: SEM 'CAPTURE', PARA ABRIR TUDO -->
+        <input type="file" id="campo-foto" accept="image/*" style="display:none">
 
         <input type="text" id="titulo" placeholder="Título do anúncio" required>
-        <input type="text" id="preco" placeholder="Valor R$" required>
-        <input type="text" id="whatsapp" placeholder="Seu Zap com DDD">
-        <input type="text" id="bairro" placeholder="Seu Bairro">
+        <input type="text" id="preco" placeholder="Preço R$" required>
+        <input type="text" id="whatsapp" placeholder="WhatsApp">
+        <input type="text" id="bairro" placeholder="Bairro">
 
-        <button type="submit" id="btnEnviar">PUBLICAR AGORA</button>
+        <button type="submit" id="btn-enviar">PUBLICAR AGORA</button>
     </form>
 </div>
 
 <script>
-    // CREDENCIAIS DO SUPABASE
-    const sUrl = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
-    const sKey = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
-    const supabase = supabase.createClient(sUrl, sKey);
+    // USE SUAS CHAVES AQUI
+    const URL_SUPA = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
+    const KEY_SUPA = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
+    const supabase = supabase.createClient(URL_SUPA, KEY_SUPA);
 
-    const fInput = document.getElementById('fotoInput');
-    const fPreview = document.getElementById('preview');
+    const arquivoInput = document.getElementById('campo-foto');
+    const previewImg = document.getElementById('foto-preview');
 
-    // MOSTRAR FOTO AO SELECIONAR
-    fInput.onchange = () => {
-        const file = fInput.files[0];
+    // Mostrar prévia
+    arquivoInput.onchange = () => {
+        const file = arquivoInput.files[0];
         if (file) {
-            fPreview.src = URL.createObjectURL(file);
-            fPreview.style.display = 'block';
-            document.querySelector('.btn-foto').style.display = 'none';
+            previewImg.src = URL.createObjectURL(file);
+            previewImg.style.display = 'block';
+            document.getElementById('label-foto').style.display = 'none';
         }
     };
 
-    // ENVIAR DADOS
-    document.getElementById('meuForm').onsubmit = async (e) => {
+    // Enviar anúncio
+    document.getElementById('formulario').onsubmit = async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('btnEnviar');
-        btn.innerText = "Enviando... aguarde";
+        const btn = document.getElementById('btn-enviar');
+        btn.innerText = "ENVIANDO...";
         btn.disabled = true;
 
-        const arquivo = fInput.files[0];
-        let urlFinal = '';
+        const foto = arquivoInput.files[0];
+        let linkDaFoto = '';
 
-        if (arquivo) {
-            const nomeUnico = Date.now() + '-' + arquivo.name;
-            const { data, error } = await supabase.storage.from('fotos-anuncios').upload(nomeUnico, arquivo);
-            
+        if (foto) {
+            const nomeArquivo = Date.now() + '-' + foto.name;
+            const { data, error } = await supabase.storage.from('fotos-anuncios').upload(nomeArquivo, foto);
             if (!error) {
-                const { data: pData } = supabase.storage.from('fotos-anuncios').getPublicUrl(nomeUnico);
-                urlFinal = pData.publicUrl;
+                const { data: pData } = supabase.storage.from('fotos-anuncios').getPublicUrl(nomeArquivo);
+                linkDaFoto = pData.publicUrl;
             }
         }
 
-        const { error: dbErr } = await supabase.from('anuncios').insert([{
+        const { error: dbError } = await supabase.from('anuncios').insert([{
             titulo: document.getElementById('titulo').value,
             preco: document.getElementById('preco').value,
             whatsapp: document.getElementById('whatsapp').value,
             bairro: document.getElementById('bairro').value,
-            imagem_url: urlFinal
+            imagem_url: linkDaFoto
         }]);
 
-        if (dbErr) {
-            alert('Erro: ' + dbErr.message);
+        if (dbError) {
+            alert('Erro: ' + dbError.message);
             btn.disabled = false;
             btn.innerText = "PUBLICAR AGORA";
         } else {
-            alert('Aqui dá negócio! Anúncio publicado.');
+            alert('Publicado com sucesso!');
             window.location.href = 'index.html';
         }
     };
 </script>
+
 </body>
 </html>
