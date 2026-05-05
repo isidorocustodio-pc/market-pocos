@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anunciar - Market Poços</title>
     
-    <!-- Link para os Ícones e Supabase -->
+    <!-- Link para os Ícones e Supabase - FUNDAMENTAL PARA APARECER O ÍCONE -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -28,7 +28,7 @@
             max-width: 400px; 
             margin: auto; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            box-sizing: border-box;
+            box-sizing: border-box; /* ESSENCIAL PARA RESPONSIVIDADE */
         }
 
         h1 { font-size: 20px; color: #007bff; margin-bottom: 20px; }
@@ -95,7 +95,7 @@
         <img id="imagem-preview" src="">
     </div>
     
-    <!-- Botão com Ícone de Câmera -->
+    <!-- Botão com Ícone de Câmera - Verifique se está EXATAMENTE assim -->
     <label for="foto" class="foto-input" id="label-foto">
         <span class="material-symbols-outlined" style="font-size: 48px;">photo_camera</span>
         <span>Tirar Foto do Produto</span>
@@ -111,9 +111,9 @@
 </form>
 
 <script>
-    // Substitua pelas suas chaves reais do Supabase
-    const supabaseUrl = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
-    const supabaseKey = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
+    // ### ATENÇÃO: TROQUE PELAS SUAS CHAVES REAIS ###
+    const supabaseUrl = 'SUA_URL_DO_SUPABASE';
+    const supabaseKey = 'SUA_CHAVE_ANON_DO_SUPABASE';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     // Mostrar prévia da foto
