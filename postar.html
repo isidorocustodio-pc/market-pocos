@@ -3,115 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Poços</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Teste Market</title>
     <style>
-        /* CSS direto e simples para não desconfigurar */
-        body { font-family: sans-serif; background: #f0f0f0; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .cartao { background: white; width: 100%; max-width: 380px; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
-        .logo { color: #007bff; font-size: 24px; font-weight: bold; margin-bottom: 5px; display: block; }
-        .slogan { color: #666; font-size: 14px; margin-bottom: 20px; display: block; }
-        
-        /* O BOTÃO DE FOTO */
-        .botao-foto {
-            display: block;
-            background: #f8fbff;
-            border: 2px dashed #007bff;
-            border-radius: 10px;
-            padding: 40px 10px;
-            margin-bottom: 20px;
-            cursor: pointer;
+        body { font-family: sans-serif; text-align: center; padding: 50px; background: #222; color: white; }
+        .btn-teste { 
+            background: #007bff; padding: 30px; border-radius: 20px; 
+            display: block; cursor: pointer; border: 5px solid white;
+            font-size: 20px; font-weight: bold;
         }
-        .emoji { font-size: 50px; display: block; margin-bottom: 10px; }
-        .texto-azul { color: #007bff; font-weight: bold; font-size: 14px; }
-
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        #foto-preview { width: 100%; border-radius: 10px; display: none; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
-<div class="cartao">
-    <span class="logo">Market Poços</span>
-    <span class="slogan">Aqui dá negócio</span> <!-- -->
+    <h1>TESTE DE ATUALIZAÇÃO</h1>
+    <p>Se você estiver vendo este fundo PRETO, o site atualizou.</p>
 
-    <form id="formulario">
-        <img id="foto-preview">
-        
-        <label for="campo-foto" class="botao-foto" id="label-foto">
-            <span class="emoji">📸</span>
-            <span class="texto-azul">CLIQUE PARA FOTO OU GALERIA</span>
-        </label>
-        
-        <!-- INPUT PURO: SEM 'CAPTURE', PARA ABRIR TUDO -->
-        <input type="file" id="campo-foto" accept="image/*" style="display:none">
+    <label for="foto" class="btn-teste">
+        📸 CLIQUE AQUI <br>
+        (CÂMERA OU GALERIA)
+    </label>
+    <input type="file" id="foto" accept="image/*" style="display:none">
 
-        <input type="text" id="titulo" placeholder="Título do anúncio" required>
-        <input type="text" id="preco" placeholder="Preço R$" required>
-        <input type="text" id="whatsapp" placeholder="WhatsApp">
-        <input type="text" id="bairro" placeholder="Bairro">
-
-        <button type="submit" id="btn-enviar">PUBLICAR AGORA</button>
-    </form>
-</div>
-
-<script>
-    // USE SUAS CHAVES AQUI
-    const URL_SUPA = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
-    const KEY_SUPA = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
-    const supabase = supabase.createClient(URL_SUPA, KEY_SUPA);
-
-    const arquivoInput = document.getElementById('campo-foto');
-    const previewImg = document.getElementById('foto-preview');
-
-    // Mostrar prévia
-    arquivoInput.onchange = () => {
-        const file = arquivoInput.files[0];
-        if (file) {
-            previewImg.src = URL.createObjectURL(file);
-            previewImg.style.display = 'block';
-            document.getElementById('label-foto').style.display = 'none';
-        }
-    };
-
-    // Enviar anúncio
-    document.getElementById('formulario').onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('btn-enviar');
-        btn.innerText = "ENVIANDO...";
-        btn.disabled = true;
-
-        const foto = arquivoInput.files[0];
-        let linkDaFoto = '';
-
-        if (foto) {
-            const nomeArquivo = Date.now() + '-' + foto.name;
-            const { data, error } = await supabase.storage.from('fotos-anuncios').upload(nomeArquivo, foto);
-            if (!error) {
-                const { data: pData } = supabase.storage.from('fotos-anuncios').getPublicUrl(nomeArquivo);
-                linkDaFoto = pData.publicUrl;
-            }
-        }
-
-        const { error: dbError } = await supabase.from('anuncios').insert([{
-            titulo: document.getElementById('titulo').value,
-            preco: document.getElementById('preco').value,
-            whatsapp: document.getElementById('whatsapp').value,
-            bairro: document.getElementById('bairro').value,
-            imagem_url: linkDaFoto
-        }]);
-
-        if (dbError) {
-            alert('Erro: ' + dbError.message);
-            btn.disabled = false;
-            btn.innerText = "PUBLICAR AGORA";
-        } else {
-            alert('Publicado com sucesso!');
-            window.location.href = 'index.html';
-        }
-    };
-</script>
+    <script>
+        document.getElementById('foto').onchange = function() {
+            alert('Funcionou! O navegador abriu as opções.');
+        };
+    </script>
 
 </body>
 </html>
