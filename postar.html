@@ -1,34 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste Market</title>
+    <title>Postar - Market Poços</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; background: #222; color: white; }
-        .btn-teste { 
-            background: #007bff; padding: 30px; border-radius: 20px; 
-            display: block; cursor: pointer; border: 5px solid white;
-            font-size: 20px; font-weight: bold;
-        }
+        body { font-family: sans-serif; padding: 20px; background: #f0f2f5; text-align: center; }
+        .form-caixa { background: white; padding: 20px; border-radius: 15px; max-width: 400px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .label-foto { display: block; background: #eef6ff; border: 2px dashed #007bff; padding: 30px; border-radius: 10px; cursor: pointer; margin-bottom: 15px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        #preview { width: 100%; border-radius: 10px; display: none; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <h1>TESTE DE ATUALIZAÇÃO</h1>
-    <p>Se você estiver vendo este fundo PRETO, o site atualizou.</p>
+<div class="form-caixa">
+    <h2 style="color:#007bff;">Novo Anúncio</h2>
+    <p>Aqui dá negócio</p>
 
-    <label for="foto" class="btn-teste">
-        📸 CLIQUE AQUI <br>
-        (CÂMERA OU GALERIA)
-    </label>
-    <input type="file" id="foto" accept="image/*" style="display:none">
+    <form id="formAdd">
+        <img id="preview">
+        <label for="foto" class="label-foto" id="btn-foto">
+            <span style="font-size:40px;">📸</span><br>
+            <b style="color:#007bff;">FOTO OU GALERIA</b>
+        </label>
+        <input type="file" id="foto" accept="image/*" style="display:none">
 
-    <script>
-        document.getElementById('foto').onchange = function() {
-            alert('Funcionou! O navegador abriu as opções.');
-        };
-    </script>
+        <input type="text" id="titulo" placeholder="Título" required>
+        <input type="text" id="preco" placeholder="Preço" required>
+        <input type="text" id="whatsapp" placeholder="WhatsApp">
+        <input type="text" id="bairro" placeholder="Bairro">
 
+        <button type="submit" id="btnS">PUBLICAR</button>
+    </form>
+</div>
+
+<script>
+    const supabaseUrl = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
+    const supabaseKey = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    document.getElementById('foto').onchange = e => {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('preview').src = URL.createObjectURL(file);
+            document.getElementById('preview').style.display = 'block';
+            document.getElementById('btn-foto').style.display = 'none';
+        }
+    };
+
+    document.getElementById('formAdd').onsubmit = async (e) => {
+        e.preventDefault();
+        const b = document.getElementById('btnS');
+        b.innerText = "Postando..."; b.disabled = true;
+
+        const file = document.getElementById('foto').files[0];
+        let url = '';
+
+        if (file) {
+            const name = Date.now() + '-' + file.name;
+            await supabase.storage.from('fotos-anuncios').upload(name, file);
+            const { data } = supabase.storage.from('fotos-anuncios').getPublicUrl(name);
+            url = data.publicUrl;
+        }
+
+        await supabase.from('anuncios').insert([{
+            titulo: document.getElementById('titulo').value,
+            preco: document.getElementById('preco').value,
+            whatsapp: document.getElementById('whatsapp').value,
+            bairro: document.getElementById('bairro').value,
+            imagem_url: url
+        }]);
+
+        // VOLTA PARA A INDEX DO MESMO PROJETO
+        window.location.href = 'index.html';
+    };
+</script>
 </body>
 </html>
