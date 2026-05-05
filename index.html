@@ -2,144 +2,66 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market Poços - Aqui dá negócio</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Reset para evitar quebras */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            font-family: -apple-system, system-ui, sans-serif; 
-            background-color: #f0f2f5; 
-            color: #333; 
-            line-height: 1.6;
-        }
-
-        /* Header fixo e responsivo */
-        header {
-            background: #fff;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo-container h1 { color: #007bff; font-size: 22px; }
-        .logo-container p { color: #666; font-size: 13px; font-weight: bold; }
-
-        /* Grade de Anúncios */
+        body { font-family: sans-serif; background-color: #f0f2f5; padding-bottom: 80px; }
+        header { background: #fff; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { color: #007bff; }
         #lista-anuncios {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 12px;
+            gap: 15px;
             padding: 15px;
-            max-width: 1000px;
+            max-width: 800px;
             margin: auto;
         }
-
-        /* Cartão do Anúncio */
-        .anuncio-card {
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .anuncio-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-
-        .anuncio-info {
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .anuncio-info h3 { font-size: 15px; margin-bottom: 5px; height: 40px; overflow: hidden; }
-        .anuncio-info .preco { color: #28a745; font-weight: bold; font-size: 17px; margin-bottom: 5px; }
-        .anuncio-info .bairro { color: #888; font-size: 11px; margin-bottom: 10px; }
-
-        /* Botão flutuante para postar */
+        .anuncio-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .anuncio-card img { width: 100%; height: 140px; object-fit: cover; }
+        .info { padding: 10px; text-align: center; }
+        .preco { color: #28a745; font-weight: bold; font-size: 18px; }
         .btn-postar {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #007bff;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,123,255,0.4);
-            font-size: 16px;
-        }
-
-        /* Ajuste para telas muito pequenas */
-        @media (max-width: 360px) {
-            #lista-anuncios { grid-template-columns: 1fr; }
+            position: fixed; bottom: 20px; right: 20px;
+            background: #007bff; color: white; padding: 15px 25px;
+            border-radius: 30px; text-decoration: none; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-container">
-        <h1>Market Poços</h1>
-        <p>Aqui dá negócio</p> <!-- Slogan atualizado -->
-    </div>
+    <h1>Market Poços</h1>
+    <p><b>Aqui dá negócio</b></p>
 </header>
 
-<div id="lista-anuncios">
-    <!-- Os anúncios entrarão aqui via JS -->
-</div>
+<div id="lista-anuncios"></div>
 
+<!-- LINK RELATIVO: Garante que abra o arquivo DO MESMO PROJETO -->
 <a href="postar.html" class="btn-postar">+ Anunciar</a>
 
 <script>
-    // Configurações do Supabase
     const supabaseUrl = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
     const supabaseKey = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function carregarAnuncios() {
-        const { data, error } = await supabase
-            .from('anuncios')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error('Erro ao carregar:', error);
-            return;
-        }
-
+    async function carregar() {
+        const { data } = await supabase.from('anuncios').select('*').order('created_at', { ascending: false });
         const lista = document.getElementById('lista-anuncios');
-        lista.innerHTML = '';
-
-        data.forEach(anuncio => {
-            lista.innerHTML += `
-                <div class="anuncio-card">
-                    <img src="${anuncio.imagem_url || 'https://via.placeholder.com/150'}" alt="${anuncio.titulo}">
-                    <div class="anuncio-info">
-                        <h3>${anuncio.titulo}</h3>
-                        <p class="preco">R$ ${anuncio.preco}</p>
-                        <p class="bairro">📍 ${anuncio.bairro}</p>
-                        <a href="https://wa.me/${anuncio.whatsapp}" style="text-decoration:none; background:#25d366; color:white; text-align:center; padding:8px; border-radius:5px; font-size:13px;">WhatsApp</a>
-                    </div>
+        lista.innerHTML = data.map(anuncio => `
+            <div class="anuncio-card">
+                <img src="${anuncio.imagem_url || 'https://via.placeholder.com/150'}">
+                <div class="info">
+                    <h3 style="font-size:14px;">${anuncio.titulo}</h3>
+                    <p class="preco">R$ ${anuncio.preco}</p>
+                    <a href="https://wa.me/${anuncio.whatsapp}" style="display:block; background:#25d366; color:white; padding:5px; border-radius:5px; text-decoration:none; margin-top:5px; font-size:12px;">WhatsApp</a>
                 </div>
-            `;
-        });
+            </div>
+        `).join('');
     }
-
-    carregarAnuncios();
+    carregar();
 </script>
-
 </body>
 </html>
