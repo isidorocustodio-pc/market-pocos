@@ -1,127 +1,144 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Poços | Aqui dá negócio</title>
-    <!-- Script do Supabase -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Market Poços - Aqui dá negócio</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-    body { 
-        <label for="foto" class="foto-input">
-    <span class="material-symbols-outlined" style="font-size: 48px; display: block; margin-bottom: 5px;">
-        photo_camera
-    </span>
-    Tirar Foto
-</label>
-<input type="file" id="foto" accept="image/*" capture="environment" style="display:none">
-    }
-    header { margin: 15px 0; }
-    .logo { 
-        max-width: 150px; /* Logo um pouco menor no mobile */
-        height: auto; 
-    }
-    form { 
-        background: white; 
-        padding: 20px; 
-        border-radius: 15px; 
-        width: 90%; /* Ocupa 90% da largura da tela */
-        max-width: 400px; /* Mas não passa de 400px em telas grandes */
-        margin: auto; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        box-sizing: border-box; /* Garante que o padding não "estoure" a largura */
-    }
-    input, select, .foto-input { 
-        width: 100%; 
-        margin: 8px 0; 
-        padding: 12px; 
-        border: 1px solid #ddd; 
-        border-radius: 8px; 
-        box-sizing: border-box; /* Fundamental para o tamanho dar certo */
-        font-size: 16px; 
-    }
-    .foto-input { 
-        display: block;
-        background: #eef6ff; 
-        border: 2px dashed #007bff; 
-        color: #007bff; 
-        font-weight: bold; 
-    }
-    button { 
-        background: #28a745; 
-        color: white; 
-        border: none; 
-        padding: 15px; 
-        border-radius: 8px; 
-        cursor: pointer; 
-        width: 100%; 
-        font-size: 18px; 
-        font-weight: bold; 
-        margin-top: 10px; 
-    }
-    #preview img { 
-        max-width: 100%; 
-        height: auto;
-        border-radius: 8px; 
-        margin-top: 15px; 
-        display: none; 
-    }
-</style>
+        /* Reset para evitar quebras */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            background-color: #f0f2f5; 
+            color: #333; 
+            line-height: 1.6;
+        }
+
+        /* Header fixo e responsivo */
+        header {
+            background: #fff;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container h1 { color: #007bff; font-size: 22px; }
+        .logo-container p { color: #666; font-size: 13px; font-weight: bold; }
+
+        /* Grade de Anúncios */
+        #lista-anuncios {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            padding: 15px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        /* Cartão do Anúncio */
+        .anuncio-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .anuncio-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .anuncio-info {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .anuncio-info h3 { font-size: 15px; margin-bottom: 5px; height: 40px; overflow: hidden; }
+        .anuncio-info .preco { color: #28a745; font-weight: bold; font-size: 17px; margin-bottom: 5px; }
+        .anuncio-info .bairro { color: #888; font-size: 11px; margin-bottom: 10px; }
+
+        /* Botão flutuante para postar */
+        .btn-postar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #007bff;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,123,255,0.4);
+            font-size: 16px;
+        }
+
+        /* Ajuste para telas muito pequenas */
+        @media (max-width: 360px) {
+            #lista-anuncios { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
 
 <header>
-    <!-- Sua logo oficial -->
-    <img src="logo.png" alt="Market Poços - Aqui dá negócio" class="logo">
+    <div class="logo-container">
+        <h1>Market Poços</h1>
+        <p>Aqui dá negócio</p> <!-- Slogan atualizado -->
+    </div>
 </header>
 
-<div class="container">
-    <a href="postar.html" class="btn-anunciar">🚀 Quero Anunciar Agora</a>
-    
-    <h2>Anúncios Recentes em Poços de Caldas</h2>
-    <div id="lista-anuncios">
-        <p>Carregando oportunidades...</p>
-    </div>
+<div id="lista-anuncios">
+    <!-- Os anúncios entrarão aqui via JS -->
 </div>
 
-<script>
-    // Conexão automática com as variáveis da Vercel
-    const supabaseUrl = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q'; // Substitua pelo link do painel do Supabase
-    const supabaseKey = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q'; // Substitua pela chave anon do painel do Supabase
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+<a href="postar.html" class="btn-postar">+ Anunciar</a>
 
-    async function buscarAnuncios() {
-        const { data, error } = await supabaseClient
-            .from('anuncios') // Nome da tabela que criamos
+<script>
+    // Configurações do Supabase
+    const supabaseUrl = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
+    const supabaseKey = 'sb_publishable_sv9_kFW9Cvh7aY_toPIqew_LQulcI9q';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function carregarAnuncios() {
+        const { data, error } = await supabase
+            .from('anuncios')
             .select('*')
             .order('created_at', { ascending: false });
 
-        const lista = document.getElementById('lista-anuncios');
-        
         if (error) {
-            lista.innerHTML = "<p>Erro ao carregar anúncios. Verifique a conexão.</p>";
-            console.error(error);
+            console.error('Erro ao carregar:', error);
             return;
         }
 
-        if (data.length === 0) {
-            lista.innerHTML = "<p>Nenhum anúncio encontrado. Seja o primeiro!</p>";
-        } else {
-            lista.innerHTML = data.map(item => `
+        const lista = document.getElementById('lista-anuncios');
+        lista.innerHTML = '';
+
+        data.forEach(anuncio => {
+            lista.innerHTML += `
                 <div class="anuncio-card">
-                    <img src="${item.imagem_url || 'https://via.placeholder.com/100'}" alt="Produto">
-                    <div>
-                        <h3 style="margin:0">${item.titulo}</h3>
-                        <p style="color:#28a745; font-weight:bold; margin:5px 0">R$ ${item.preco}</p>
-                        <small>Bairro: ${item.bairro || 'Poços de Caldas'}</small>
+                    <img src="${anuncio.imagem_url || 'https://via.placeholder.com/150'}" alt="${anuncio.titulo}">
+                    <div class="anuncio-info">
+                        <h3>${anuncio.titulo}</h3>
+                        <p class="preco">R$ ${anuncio.preco}</p>
+                        <p class="bairro">📍 ${anuncio.bairro}</p>
+                        <a href="https://wa.me/${anuncio.whatsapp}" style="text-decoration:none; background:#25d366; color:white; text-align:center; padding:8px; border-radius:5px; font-size:13px;">WhatsApp</a>
                     </div>
                 </div>
-            `).join('');
-        }
+            `;
+        });
     }
 
-    buscarAnuncios();
+    carregarAnuncios();
 </script>
 
 </body>
