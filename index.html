@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market Poços | Aqui dá negócio</title>
@@ -8,12 +9,13 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
     body { 
-        font-family: 'Segoe UI', sans-serif; 
-        padding: 10px; /* Reduzi o padding para ganhar espaço */
-        text-align: center; 
-        background: #f0f2f5; 
-        color: #333;
-        margin: 0;
+        <label for="foto" class="foto-input">
+    <span class="material-symbols-outlined" style="font-size: 48px; display: block; margin-bottom: 5px;">
+        photo_camera
+    </span>
+    Tirar Foto
+</label>
+<input type="file" id="foto" accept="image/*" capture="environment" style="display:none">
     }
     header { margin: 15px 0; }
     .logo { 
